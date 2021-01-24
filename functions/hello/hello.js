@@ -16,7 +16,7 @@ exports.handler = async (event, context) => {
     const result = await adminClient.query(
       q.Create(
         q.Collection('messages'),
-        { data: { detail:  messageBody.message} },
+        { data: { message:  messageBody.message} },
       )
     )
 
