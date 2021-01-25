@@ -1,12 +1,24 @@
 body {
-  background-color: #f7f7f7;
+  margin: 0px;
+  padding: 0px;
+  height: 100vh;
   font-family: 'Roboto', sans-serif;
+}
+.dark-mode{
+  background-color: #403e42;
+  color: #FAFAFA;
+}
+.dark-mode .list{
+  background-color: rgb(117, 115, 115);
+  
 }
 .main {
   text-align: center;
 }
-#input {
-  width: 50%;
+.dark-mode .input {
+  width: 40%;
+  border: '1px solid white';
+  color: 'white'
 }
 .list{
   display: block;
@@ -14,7 +26,7 @@ body {
   margin-right: auto;
   width: 40%;
   background-color: #ede0e0;
-  padding: 30px;
+  padding: 20px;
 }
 .loading{
   width: 100%;

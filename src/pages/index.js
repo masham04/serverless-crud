@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Formik } from "formik";
 import "./style.css";
-import swal from 'sweetalert';
 import List from "@material-ui/core/List";
+import Swal from "sweetalert2";
 import { TextField } from "@material-ui/core";
 import SaveIcon from "@material-ui/icons/Save";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import CircularProgress from "@material-ui/core/CircularProgress";
-
-
+import Switch from "@material-ui/core/Switch";
 
 const IndexPage = () => {
-  
+
+  function myFunction(el) {
+    var element = document.body;
+    element.classList.toggle("dark-mode");
+ }
   const [messages, setmessages] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isloading, setIsLoading] = useState(false);
@@ -44,30 +47,35 @@ const IndexPage = () => {
     setIsDeleting(false);
   }
   async function handleupdate(el) {
-   
-    // setIsUpdating(true)
-    // // const update = prompt("Enter values");
-    // const {value: name} = await swal({
-    //   title: 'Input your name',
-    //   input: 'text',
-    //   inputPlaceholder: 'Enter here',
-    //   value: el.data.message
-    // })
-  
-    // if (value === null) {
-    //   console.log("no data");
-    // } else {
-    //   await fetch(`/.netlify/functions/updatedata`, {
-    //     method: "post",
-    //     body: JSON.stringify({ id: el.ref["@ref"].id, message: value }),
-    //   });
-    // }
-    // setIsUpdating(false);
-    
+    setIsUpdating(true);
+    const { value: update } = await Swal.fire({
+      input: "text",
+      inputLabel: "Message",
+      inputValue: el.data.message,
+      showCancelButton: true,
+    });
+    if (update === null) {
+      console.log("no data");
+    } else {
+      await fetch(`/.netlify/functions/updatedata`, {
+        method: "post",
+        body: JSON.stringify({ id: el.ref["@ref"].id, message: update }),
+      });
+    }
+    setIsUpdating(false);
   }
   /////////////////////////////////////////////////////
   return (
-    <div>
+    <div className="body">
+      <div style={{marginLeft: '90%',textAlign: 'center'}}>
+        <p>Dark Mode</p>
+        <Switch
+        
+          onChange={myFunction}
+          name="checkedB"
+          color="white"
+        />
+      </div>
       <div className="main">
         <h1>CRUD App</h1>
 
@@ -110,9 +118,9 @@ const IndexPage = () => {
                 value={values.message}
                 label="Message"
                 multiline
-                id="input"
+                className="input"
+                style={{width: '40%', color: 'white'}}
                 required
-                style={{ width: "40%" }}
                 rows={6}
                 variant="outlined"
               />
@@ -134,41 +142,42 @@ const IndexPage = () => {
       </div>
 
       <Box mt={3}>
-        {messages.map((el, ind) => {
-          console.log(el.ref["@ref"].id);
-          return (
-            <div className="list" key={ind}>
-              <List>
-                <h2>{el.data.message}</h2>
-                <Button
-                  onClick={() => {
-                    handleupdate(el)
-                    
-                  }}
-                  variant="contained"
-                  color="primary"
-                  disabled={isUpdating ? true : false}
-                >
-                  Update
-                </Button>
-                {"  "}
-                <Button
-                  onClick={() => {
-                    handledelete(el);
-                  }}
-                  variant="contained"
-                  color="secondary"
-                  disabled={isDeleting ? true : false}
-                >
-                  Delete
-                </Button>
-              </List>
-            </div>
-          );
-        })}
+        {!messages ? (
+          <div className="loading">
+            <CircularProgress id="loader" />
+          </div>
+        ) : (
+          messages.map((el) => {
+            console.log(el.ref["@ref"].id);
+            return (
+              <div className="list">
+                <List>
+                  <h2>{el.data.message}</h2>
+                  <Button
+                    onClick={() => {
+                      handleupdate(el);
+                    }}
+                    variant="contained"
+                    color="primary"
+                  >
+                    Update
+                  </Button>
+                  {"  "}
+                  <Button
+                    onClick={() => {
+                      handledelete(el);
+                    }}
+                    variant="contained"
+                    color="secondary"
+                  >
+                    Delete
+                  </Button>
+                </List>
+              </div>
+            );
+          })
+        )}
       </Box>
-  
-      
     </div>
   );
 };
